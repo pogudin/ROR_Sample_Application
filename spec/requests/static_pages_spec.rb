@@ -7,12 +7,20 @@ describe "Static Pages" do
 	let(:base_title) { "Ruby on Rails Tutorial Sample App" }
 	subject { page }
 
+	shared_examples_for "All static pages" do
+		it { should have_selector('h1'), text: heading }
+		it { should have_title (full_title(title_page)) }
+
+	end
+
+
 	describe "Contacts page" do
 		
 		before { visit contacts_path }
+		let(:heading) 	{ 'Contacts' }
+		let(:title_page){ 'Contacts'}
 
-		it { should have_content('Contacts') }
-		it { have_title("#{base_title} | Contacts") }
+		it_should_behave_like "All static pages"
 
 	end
 
@@ -20,29 +28,52 @@ describe "Static Pages" do
 
 		before { visit root_path}
 
-		it { should have_content('Sample App') }
-		it { should have_title("#{base_title}") }
-		it { should_not have_title(' | Home') }
+		let(:heading) 		{'Sample App'}
+		let(:title_page) 	{''}
+
+		it_should_behave_like "All static pages" 
+		it { should_not have_title(' | Home')}
 
 	end
 
 	describe "Help page" do
 
 		before { visit help_path }
+		
+		let(:heading) 		{ 'Help' }
+		let(:title_page)	{ 'Help'}
 
-		it { should have_content('Help') }
-		it { should have_title("#{base_title} | Help") }
-
+		it_should_behave_like "All static pages"
 	end
 
 	describe "About Us" do
 
 		before { visit about_path }
 
-		it { should have_content('About Us') }
-		it { should have_title ("#{base_title} | About Us") }
+		let(:heading)		{ 'About Us' }
+		let(:title_page)	{ 'About Us' }
+
+		it_should_behave_like "All static pages"
 
 	end
+
+	## Checking links
+
+	it "Should have the right links on the layout" do 
+		visit root_path
+		click_link "About"
+		expect(page).to have_title(full_title('About Us'))
+		click_link "Help"
+		expect(page).to have_title(full_title('Help'))
+		click_link "Contacts"
+		expect(page).to have_title(full_title('Contacts'))
+		click_link "Home"
+		click_link "Sign up now!"
+		expect(page).to have_title(full_title('Sign up'))
+
+	end
+
+
 
 end
 
